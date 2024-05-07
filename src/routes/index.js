@@ -11,7 +11,7 @@ router.get("/ping", (req, res) => {
 
 router.post("/send-otp", asyncErrorHandler(sendOtp));
 router.post("/resend-otp", asyncErrorHandler(resendOtp));
-router.get("/get-otp-data", asyncErrorHandler(getOtpData));
+router.get("/get-otp-data/:email", asyncErrorHandler(getOtpData));
 
 router.use(errorMiddleware);
 

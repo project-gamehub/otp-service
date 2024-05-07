@@ -31,17 +31,14 @@ class OtpService {
         });
 
         // send the mail with original OTP
-        // resetPasswordMailSender(email, otp);
         try {
-            axios.post(MAILING_SERVICE_URL + "/send-reset-pass-mail", {
+            await axios.post(MAILING_SERVICE_URL + "/send-reset-pass-mail", {
                 email,
                 otp
             });
         } catch (error) {
             console.error("Error Sending Mail");
         }
-
-        return "OTP requested successfully";
     }
 
     async resendOtp(email) {
