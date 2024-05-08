@@ -17,6 +17,10 @@ class OtpService {
         return await this.otpRepository.getOtpData({ email });
     }
 
+    async deleteOtpData(email) {
+        this.otpRepository.delete({ email });
+    }
+
     async sendOtp(email) {
         // Else Generate a 4 digit OTP
         const otp = randomOtpGenerator();
@@ -42,7 +46,7 @@ class OtpService {
     }
 
     async resendOtp(email) {
-        // Else generate new otp
+        // generate new otp
         const otp = randomOtpGenerator();
 
         // encrypt the otp
@@ -50,6 +54,9 @@ class OtpService {
 
         // requestAttempts++, lastRequestedTime = currTime, update encryptedOTP
         const user = await this.otpRepository.getOtpData({ email });
+        if (!user) {
+            throw new customError(400, "No user found");
+        }
         await this.otpRepository.update(
             { email },
             {
@@ -61,20 +68,21 @@ class OtpService {
 
         // send the mail with decrypted OTP
         try {
-            axios.post(MAILING_SERVICE_URL + "/send-reset-pass-mail", {
+            await axios.post(MAILING_SERVICE_URL + "/send-reset-pass-mail", {
                 email,
                 otp
             });
         } catch (error) {
             console.error("Error Sending Mail");
         }
-
-        return "OTP resent successfully";
     }
 
     async verifyOtp(email, otp) {
         // verifyAttempts++
         const user = await this.otpRepository.getOtpData({ email });
+        if (!user) {
+            throw new customError(400, "No user found");
+        }
         await this.otpRepository.update(
             { email },
             { verifyAttempts: user?.verifyAttempts + 1 }
@@ -84,10 +92,9 @@ class OtpService {
         const isCorrectOtp = compareBcryptHash(otp, user?.otp);
         // If wrong OTP, throw error
         if (!isCorrectOtp) {
-            throw new customError(400, "Wrong OTP, please try again");
+            return false;
         }
-
-        return "Correct OTP";
+        return true;
     }
 }
 

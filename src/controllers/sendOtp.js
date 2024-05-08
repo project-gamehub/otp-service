@@ -2,7 +2,6 @@ import customError from "../errors/errorUtils/customError.js";
 import OtpService from "../service/otpService.js";
 
 const sendOtp = async (req, res) => {
-
     const email = req.body?.email;
     if (!email) {
         throw new customError(400, "Email is required");

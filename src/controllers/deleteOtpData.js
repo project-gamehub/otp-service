@@ -1,15 +1,14 @@
 import OtpService from "../service/otpService.js";
-const getOtpData = async (req, res) => {
+const deleteOtpData = async (req, res) => {
     const email = req.params.email;
 
     const otpService = new OtpService();
-    const data = await otpService.getOtpData(email);
+    otpService.deleteOtpData(email);
 
     return res.status(200).json({
         success: true,
-        message: "OTP Data Fetched Successfully",
-        data
+        message: "OTP Data will be deleted"
     });
 };
 
-export default getOtpData;
+export default deleteOtpData;
